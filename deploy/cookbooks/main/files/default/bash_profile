@@ -1,0 +1,15 @@
+. .bashrc
+
+export PIP_DOWNLOAD_CACHE=/tmp/pip
+export DJANGO_SETTINGS_MODULE=settings
+export PYTHONPATH=$PYTHONPATH:~/sites/project/checkouts/project/readtheproject
+export EDITOR=vim
+
+. sites/project/bin/activate
+
+cd ~/sites/project/
+
+
+alias chk='cd /home/project/sites/project/checkouts/project'
+alias run='cd /home/project/sites/project/run'
+

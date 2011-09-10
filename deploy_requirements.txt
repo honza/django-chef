@@ -1,0 +1,4 @@
+-r pip_requirements.txt
+psycopg2
+gunicorn
+python-memcached
