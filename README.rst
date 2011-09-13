@@ -26,6 +26,13 @@ execution:
 
 This is a work in progress. I'd welcome any suggestions or help.
 
+Problems
+--------
+
+* The ubuntu server has to be rebooted before Upstart entries take place.
+* Running provisioning more than once will fail; PostgreSQL will complain that
+  the user/db already exists.
+
 Credit
 ------
 
