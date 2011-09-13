@@ -1,11 +1,11 @@
 server {
     listen 8000;
-    server_name media.project;
+    server_name media.yoyoyo;
     access_log  /var/log/nginx/rtdmedia.log;
 
     location / {
         expires 60m;
-        root /home/project/sites/project/checkouts/project/media;
+        root /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/media;
         add_header X-Deity <%= node.hostname %>;
     }
 }
@@ -14,36 +14,36 @@ server {
     index index.html index.htm;
     listen 80;
     listen 8000 default;
-    server_name  project;
-    access_log  /var/log/nginx/project.log host;
+    server_name  yoyoyo;
+    access_log  /var/log/nginx/yoyoyo.log host;
 
     location /favicon.ico {
-        root /home/project/sites/project/checkouts/project/media/images;
+        root /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/media/images;
         break;
     }
 
     location /robots.txt {
-        root /home/project/sites/project/checkouts/project/media;
+        root /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/media;
         break;
     }
 
-    location  ~* /project/(.+)/en/(.+)/(.*) {
-	alias /home/project/sites/project/checkouts/project/user_builds/$1/rtd-builds/$2/$3;
+    location  ~* /yoyoyo/(.+)/en/(.+)/(.*) {
+	alias /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/user_builds/$1/rtd-builds/$2/$3;
         error_page 404 = @fallback;
         error_page 500 = @fallback;
         add_header X-Served Nginx;
         add_header X-Deity <%= node.hostname %>;
     }
     location  ~* /en/(.+)/(.*) {
-        alias /home/project/sites/project/checkouts/project/user_builds/$domain/rtd-builds/$1/$2;
+        alias /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/user_builds/$domain/rtd-builds/$1/$2;
         error_page 404 = @fallback;
         error_page 500 = @fallback;
         add_header X-Served Nginx;
         add_header X-Deity <%= node.hostname %>;
     }
 
-    location  ~* /project/(?P<project>.+)/en/(?P<version>.+) {
-        rewrite .* http://project/project/$project/en/$version/;
+    location  ~* /yoyoyo/(?P<yoyoyo>.+)/en/(?P<version>.+) {
+        rewrite .* http://yoyoyo/yoyoyo/$yoyoyo/en/$version/;
     }
 
 
@@ -66,7 +66,7 @@ server {
 
     location /user_builds/ {
         internal;
-        root   /home/project/sites/project/checkouts/project;
+        root   /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo;
         error_page 404 = @fallback;
         error_page 500 = @fallback;
     }
@@ -75,28 +75,28 @@ server {
 server {
     listen 80;
     listen 8000;
-    server_name ~^(?P<domain>.+).project;
-    access_log  /var/log/nginx/project.log host;
+    server_name ~^(?P<domain>.+).yoyoyo;
+    access_log  /var/log/nginx/yoyoyo.log host;
 
     location /favicon.ico {
-        root /home/project/sites/project/checkouts/project/media/images;
+        root /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/media/images;
         break;
     }
 
     location /robots.txt {
-        root /home/project/sites/project/checkouts/project/media;
+        root /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/media;
         break;
     }
 
     location  ~* /en/(.+)/(.*) {
-        alias /home/project/sites/project/checkouts/project/user_builds/$domain/rtd-builds/$1/$2;
+        alias /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/user_builds/$domain/rtd-builds/$1/$2;
         error_page 404 = @fallback;
         error_page 500 = @fallback;
         add_header X-Served Nginx;
         add_header X-Deity <%= node.hostname %>;
     }
     location / {
-	rewrite (.*) http://$domain.project/en/latest/;
+	rewrite (.*) http://$domain.yoyoyo/en/latest/;
     }
     location @fallback {
         proxy_pass http://127.0.0.1:8888;
@@ -110,6 +110,6 @@ server {
 
 server {
     listen 8000;
-    server_name www.project.com project.com www.project;
-    rewrite ^(.*) http://project$1;
+    server_name www.yoyoyo.com yoyoyo.com www.yoyoyo;
+    rewrite ^(.*) http://yoyoyo$1;
 }

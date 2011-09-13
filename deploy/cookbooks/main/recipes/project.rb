@@ -1,13 +1,13 @@
-cookbook_file "/home/project/.bash_profile" do
+cookbook_file "/home/yoyoyo/.bash_profile" do
     source "bash_profile"
-    owner "project"
-    group "project"
+    owner "yoyoyo"
+    group "yoyoyo"
     mode 0755
 end
 
-directory "/home/project/.ssh" do
-    owner "project"
-    group "project"
+directory "/home/yoyoyo/.ssh" do
+    owner "yoyoyo"
+    group "yoyoyo"
     mode 0700
 end
 
@@ -15,43 +15,43 @@ end
 if node.attribute?('private_key')
     file = File.open(node[:private_key], "rb")
     file_contents = file.read
-    file "/home/project/.ssh/id_rsa" do
-        owner "project"
-        group "project"
+    file "/home/yoyoyo/.ssh/id_rsa" do
+        owner "yoyoyo"
+        group "yoyoyo"
         mode 0600
         content file_contents
     end
 end
 
-directory "/home/project/sites/" do
-    owner "project"
-    group "project"
+directory "/home/yoyoyo/sites/" do
+    owner "yoyoyo"
+    group "yoyoyo"
     mode 0775
 end
 
-virtualenv "/home/project/sites/project" do
-    owner "project"
-    group "project"
+virtualenv "/home/yoyoyo/sites/yoyoyo" do
+    owner "yoyoyo"
+    group "yoyoyo"
     mode 0775
 end
 
-directory "/home/project/sites/project/run" do
-    owner "project"
-    group "project"
+directory "/home/yoyoyo/sites/yoyoyo/run" do
+    owner "yoyoyo"
+    group "yoyoyo"
     mode 0775
 end
 
-directory "/home/project/sites/project/checkouts" do
-    owner "project"
-    group "project"
+directory "/home/yoyoyo/sites/yoyoyo/checkouts" do
+    owner "yoyoyo"
+    group "yoyoyo"
     mode 0775
 end
 
-#git "/home/project/sites/project/checkouts/project" do
-  #repository "git://github.com/rtfd/project.git"
+#git "/home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo" do
+  #repository "git://github.com/rtfd/yoyoyo.git"
   #reference "HEAD"
-  #user "project"
-  #group "project"
+  #user "yoyoyo"
+  #group "yoyoyo"
   #action :sync
 #end
 
@@ -61,10 +61,10 @@ end
 
 script "Install Requirements" do
   interpreter "bash"
-  user "project"
-  group "project"
+  user "yoyoyo"
+  group "yoyoyo"
   code <<-EOH
-  /home/project/sites/project/bin/pip install -r /home/project/sites/project/checkouts/project/deploy_requirements.txt
+  /home/yoyoyo/sites/yoyoyo/bin/pip install -r /home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo/deploy_requirements.txt
   touch /tmp/pip_ran
   EOH
   creates "/tmp/pip_ran"

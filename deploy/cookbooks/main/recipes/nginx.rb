@@ -20,8 +20,8 @@ file "/etc/nginx/sites-enabled/default" do
     action :delete
 end
 
-template "/etc/nginx/sites-enabled/project" do
-  source "project"
+template "/etc/nginx/sites-enabled/yoyoyo" do
+  source "yoyoyo"
   mode 0640
   owner "root"
   group "root"

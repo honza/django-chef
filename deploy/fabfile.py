@@ -3,9 +3,9 @@ from contextlib import contextmanager
 env.user = 'vagrant'
 env.hosts = ['127.0.0.1:2222']
 
-env.code_dir = '/home/project/sites/project/checkouts/project'
-env.virtualenv = '/home/project/sites/project'
-env.rundir = '/home/project/sites/project/run'
+env.code_dir = '/home/yoyoyo/sites/yoyoyo/checkouts/yoyoyo'
+env.virtualenv = '/home/yoyoyo/sites/yoyoyo'
+env.rundir = '/home/yoyoyo/sites/yoyoyo/run'
 env.activate = 'source %s/bin/activate' % env.virtualenv
 
 env.chef_executable = '/var/lib/gems/1.8/bin/chef-solo'
@@ -29,7 +29,7 @@ def update():
 
 def reload():
     "Reload the server."
-    env.user = "project"
+    env.user = "yoyoyo"
     run("kill -HUP `cat %s/gunicorn.pid`" % env.rundir, pty=True)
 
 @contextmanager
@@ -38,7 +38,7 @@ def _virtualenv():
         yield
 
 def bootstrap():
-    with cd("%s/project" % env.code_dir):
+    with cd("%s/yoyoyo" % env.code_dir):
         with _virtualenv():
             run('python manage.py syncdb --noinput --settings=settings_server')
             run('python manage.py migrate --settings=settings_server')

@@ -10,16 +10,16 @@
       "ubuntu_python_packages": ["python-setuptools", "python-pip", "python-dev", "libpq-dev"],
       "pip_python_packages": {"virtualenv": "1.5.1", "mercurial": "1.7"},
       "users": {
-        "project": {
+        "yoyoyo": {
           "id": 1005,
-          "full_name": "Project User",
+          "full_name": "Yoyoyo User",
           "key": "redacted"
         }
       },
       "groups": {
-        "project": {
+        "yoyoyo": {
           "gid": 205,
-          "members": ["project"]
+          "members": ["yoyoyo"]
         }
       }
      }

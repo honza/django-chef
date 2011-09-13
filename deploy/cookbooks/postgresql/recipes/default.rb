@@ -34,16 +34,16 @@ end
 
 execute "create-database-user" do
     code = <<-EOH
-    psql -U postgres -c "select * from pg_user where usename='project'" | grep -c project
+    psql -U postgres -c "select * from pg_user where usename='yoyoyo'" | grep -c yoyoyo
     EOH
-    command "createuser -U postgres -sw project"
+    command "createuser -U postgres -sw yoyoyo"
     not_if code
 end
 
 execute "create-database" do
     exists = <<-EOH
-    psql -U postgres -c "select * from pg_database WHERE datname='project'" | grep -c project
+    psql -U postgres -c "select * from pg_database WHERE datname='yoyoyo'" | grep -c yoyoyo
     EOH
-    command "createdb -U project -O project project"
+    command "createdb -U yoyoyo -O yoyoyo yoyoyo"
     not_if exists
 end

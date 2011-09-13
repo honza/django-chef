@@ -1,14 +1,14 @@
 # Gunicorn setup
 
-cookbook_file "/etc/init/project-gunicorn.conf" do
+cookbook_file "/etc/init/yoyoyo-gunicorn.conf" do
     source "gunicorn.conf"
     owner "root"
     group "root"
     mode 0644
-    notifies :restart, "service[project-gunicorn]"
+    notifies :restart, "service[yoyoyo-gunicorn]"
 end
 
-service "project-gunicorn" do
+service "yoyoyo-gunicorn" do
     provider Chef::Provider::Service::Upstart
     enabled true
     running true
