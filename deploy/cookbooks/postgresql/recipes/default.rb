@@ -25,14 +25,25 @@ execute "restart postgres" do
 end
 
 execute "create-root-user" do
+    code = <<-EOH
+    psql -U postgres -c "select * from pg_user where usename='root'" | grep -c root
+    EOH
     command "createuser -U postgres -s root"
+    not_if code
 end
 
 execute "create-database-user" do
-    command "createuser -U postgres -sw directory"
+    code = <<-EOH
+    psql -U postgres -c "select * from pg_user where usename='project'" | grep -c project
+    EOH
+    command "createuser -U postgres -sw project"
+    not_if code
 end
 
 execute "create-database" do
-    #command "createdb -U postgres -O #{node[:dbuser]} -E utf8 -T template0 #{node[:dbname]}"
-    command "createdb -U directory -O directory directory"
+    exists = <<-EOH
+    psql -U postgres -c "select * from pg_database WHERE datname='project'" | grep -c project
+    EOH
+    command "createdb -U project -O project project"
+    not_if exists
 end
