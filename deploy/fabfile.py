@@ -38,7 +38,7 @@ def _virtualenv():
         yield
 
 def bootstrap():
-    with cd("%s/directory" % env.code_dir):
+    with cd("%s/project" % env.code_dir):
         with _virtualenv():
             run('python manage.py syncdb --noinput --settings=settings_server')
             run('python manage.py migrate --settings=settings_server')
