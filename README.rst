@@ -25,10 +25,18 @@ execution:
 
 This is a work in progress. I'd welcome any suggestions or help.
 
-Problems
---------
+Usage
+-----
 
-* The ubuntu server has to be rebooted before Upstart entries take place.
+* Install `Vagrant`_
+* Download the ``lucid64`` box and add it as ``base``
+* Move your project to the ``project`` directory
+* Seach and replace all occurrences of ``yoyoyo`` with your project's name
+    * ``$ find . -path './.git' -prune -o -type f -print0 | xargs -0 sed -i '' 's/yoyoyo/yourname/g'``
+* ``cd`` into the ``deploy`` directory
+* Run ``vagrant up``
+* Once it's done, run ``vagrant halt`` and then ``vagrant up`` again
+* Lastly, bootstrap your django project with ``fab vagrant bootstrap`` (requires fabric)
 
 Credit
 ------
