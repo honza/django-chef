@@ -14,7 +14,6 @@ This is based on the content and recommendations stemming from `Djangocon
 * gunicorn
 * postgresql
 * memcached
-* celery
 
 Of course, other small applications will be installed to ensure smoother
 execution:
@@ -30,8 +29,6 @@ Problems
 --------
 
 * The ubuntu server has to be rebooted before Upstart entries take place.
-* Running provisioning more than once will fail; PostgreSQL will complain that
-  the user/db already exists.
 
 Credit
 ------
