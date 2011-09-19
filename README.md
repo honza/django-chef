@@ -14,37 +14,42 @@ This is based on the content and recommendations stemming from [Djangocon
 * gunicorn
 * postgresql
 * memcached
+* rabbitmq
+* celery
 
 Of course, other small applications will be installed to ensure smoother
 execution:
 
 * virtualenv & pip
-* git/hg
+* git
 * Python driver for postgresql
 * etc
 
-This is a work in progress. I'd welcome any suggestions or help.
 
 Usage
 -----
 
 * Install [Vagrant][3]
 * Download the `lucid64` box and add it as `base`
-* Move your project to the `project` directory
-* Seach and replace all occurrences of `yoyoyo` with your project's name
-    * `$ find . -path './.git' -prune -o -type f -print0 | xargs -0 sed -i '' 's/yoyoyo/yourname/g'`
-* `cd` into the `deploy` directory
-* Run `vagrant up`
-* Once it's done, run `vagrant halt` and then `vagrant up` again
-* Lastly, bootstrap your django project with `fab vagrant bootstrap` (requires fabric)
+* Your django project should live in `coolname`. (i.e. `coolname/settings.py`)
+* Please change the name of the directory to match your project
+* The name of the project has to be changed in a few other places
+    * `fabfile.py`
+    * `node.json`
+* Run `vagrant up` to build the VM
+* Then run `fab -R vagrant bootstrap` which will create a virtualenv, load your
+  code, install dependencies, sync your db, etc.
 
-Credit
-------
 
-Most of this code is stolen/borrowed from the amazing [Read The Docs][5] project.
+Vagrant roledef for fabric
+--------------------------
+
+The main `fabfile` includes some special logic to work around some of the
+limitations of vagrant. Nothing too hacky though. Every time you want to
+execute something on your local VM, include the `-R vagrant` flag.
+
 
 [1]: https://www.djangoproject.com/
 [2]: http://www.opscode.com/chef/
 [3]: http://vagrantup.com/
 [4]: http://djangocon.us/
-[5]: https://github.com/rtfd/readthedocs.org
