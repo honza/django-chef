@@ -1,127 +1,171 @@
-from fabric.api import *
-from fabric.decorators import runs_once
+from fabric.api import cd, env, prefix, run, sudo, local, settings
+from contextlib import contextmanager
 
-env.runtime = 'production'
-env.hosts = ['chimera.ericholscher.com', 'ladon.ericholscher.com', 'mozbuild.ericholscher.com']
-env.user = 'docs'
-env.code_dir = '/home/docs/sites/readthedocs.org/checkouts/readthedocs.org'
-env.virtualenv = '/home/docs/sites/readthedocs.org'
-env.rundir = '/home/docs/sites/readthedocs.org/run'
+
+env.roledefs = {
+    'vagrant': ['vagrant@127.0.0.1:2222']
+}
+
+env.root_dir = '/var/www/nginx-default'
+env.virtualenv = '%s/env' % env.root_dir
+env.activate = 'source %s/bin/activate ' % env.virtualenv
+env.code_dir = '%s/coolname' % env.root_dir
+env.media_dir = '%s/media' % env.root_dir
+
+env.chef_executable = '/var/lib/gems/1.8/bin/chef-solo'
+
+
+@contextmanager
+def _virtualenv():
+    with prefix(env.activate):
+        yield
+
+
+def _vagrant():
+    result = local('vagrant ssh_config | grep IdentityFile', capture=True)
+    env.key_filename = result.split()[1]
+
+
+def create_virtualenv():
+    with cd(env.root_dir):
+        sudo('virtualenv env --no-site-packages')
+
+
+def install_chef():
+    """
+    Install chef-solo on the server
+    """
+    sudo('apt-get update', pty=True)
+    sudo('apt-get install -y git-core rubygems ruby ruby-dev', pty=True)
+    sudo('gem install chef --no-ri --no-rdoc', pty=True)
+
+
+def sync_config():
+    """
+    rsync `deploy/` to the server
+    """
+    local('rsync -av deploy/ %s@%s:/etc/chef' % (env.user, env.hosts[0]))
+
+
+def provision():
+    """
+    Run chef-solo
+    """
+    sync_config()
+    sudo('cd /etc/chef && %s -c solo.rb -j node.json' % env.chef_executable, pty=True)
+
+
+def restart():
+    """
+    Reload nginx/gunicorn
+    """
+    if env.user == 'vagrant':
+        _vagrant()
+    with settings(warn_only=True):
+        with cd(env.code_dir):
+            pid = sudo('cat gunicorn.pid')
+            sudo('find . -name "*.pyc" -exec rm {} \;')
+            if not pid.succeeded:
+                start_gunicorn()
+            else:
+                sudo('kill -HUP %s' % pid)
+    sudo('/etc/init.d/nginx restart')
+
+
+def start_gunicorn():
+    if env.user == 'vagrant':
+        _vagrant()
+    with cd(env.code_dir):
+        with _virtualenv():
+            sudo('gunicorn_django -c gunicorn.py --daemon settings_server.py & sleep 3')
+
 
 def push():
-    "Push new code, but don't restart/reload."
-    local('git push origin master')
-    with cd(env.code_dir):
-        run('git pull origin master')
+    """
+    Update application code on the server
+    """
+    if env.user == 'vagrant':
+        # Check if a link between /vagrant and /var/www exists
+        # If not, create it
+        _vagrant()
+        with settings(warn_only=True):
+            result = sudo('ls %s' % env.code_dir)
+            if not result.succeeded:
+                sudo('ln -s /vagrant/coolname %s' % env.code_dir)
+            result = sudo('ls %s' % env.media_dir)
+            if not result.succeeded:
+                sudo('ln -s /vagrant/media %s' % env.media_dir)
 
-def update_requirements():
-    "Update requirements in the virtualenv."
-    run("%s/bin/pip install -r %s/deploy_requirements.txt" % (env.virtualenv, env.code_dir))
+        return
 
-def migrate(project=None):
-    if project:
-        run('django-admin.py migrate %s' % project)
-    else:
-        run('django-admin.py migrate')
+    with settings(warn_only=True):
+        result = local("git push live dev")
 
-@hosts(['chimera.ericholscher.com', 'ladon.ericholscher.com'])
-def restart():
-    "Restart (or just start) the server"
-    env.user = "root"
-    run("restart readthedocs-gunicorn")
+        # if push didn't work, the repository probably doesn't exist
+        # 1. create an empty repo
+        # 2. push to it with -u
+        # 3. retry
+        # 4. profit
 
-@hosts(['mozbuild.ericholscher.com'])
-#@hosts(['kirin.ericholscher.com'])
-def celery():
-    "Restart (or just start) the server"
-    env.user = "root"
-    run("restart readthedocs-celery")
+        if not result.succeeded:
+            result2 = run("ls %s" % env.code_dir)
+            if not result2.succeeded:
+                sudo('mkdir %s' % env.code_dir)
+            with cd("%s" % env.code_dir):
+                sudo("git init")
+                sudo("git config --bool receive.denyCurrentBranch false")
+                local("git push live -u dev")
+                push()
+                return
 
-def pull():
-    "Pull new code"
-    with cd(env.code_dir):
-        run('git pull origin master')
-
-@runs_once
-def spider():
-    local('patu.py -d1 readthedocs.org')
-
-def _aws_wrapper(f, *args, **kwargs):
-    "get AWS credentials if not defined"
-    #these are normally defined in ~/.fabricrc
-    @hosts('run_once') #so fab doesn't go crazy 
-    def wrapped(*args, **kwargs):
-        from boto.cloudfront.exception import CloudFrontServerError
-        from boto.cloudfront import CloudFrontConnection
-        c = CloudFrontConnection(env.aws_access_key_id, 
-                                 env.aws_secret_access_key)
-        if not hasattr(env, 'aws_access_key_id'):
-            prompt('AWS Access Key ID: ', key='aws_access_key_id')
-        if not hasattr(env, 'aws_secret_access_key'):
-            prompt('AWS Secret Access Key: ', key='aws_secret_access_key')
-        try:
-            return f(c, *args, **kwargs)
-        except CloudFrontServerError as e:
-            print "Error: \n", e.error_message
-    return wrapped
-
-@_aws_wrapper
-def to_cdn(c, slug):
-    "Create a new Distribution object on CloudFront"
-    from boto.cloudfront import CloudFrontConnection
-    from boto.cloudfront.origin import CustomOrigin
-
-    c = CloudFrontConnection(env.aws_access_key_id, 
-                             env.aws_secret_access_key)
-    d = c.create_distribution(
-        origin=CustomOrigin(slug + '.cdn.readthedocs.org',
-                            origin_protocol_policy='http-only'),
-        enabled=True, 
-        comment='Slug: ' + slug,
-        cnames=[slug + '.readthedocs.org']
-        )
-    print "Created: " + d.domain_name + " for " + slug
-    list_cdn()
-
-@_aws_wrapper
-def list_cdn(c):
-    "List Distributions on CloudFront"
-    distributions = c.get_all_distributions()
-    for d in distributions:
-        print "%3s %4s %40s %30s" % ('Ena' if d.enabled else 'Dis', 
-                                     d.status[:4], d.origin.dns_name, 
-                                     d.domain_name)
-
-@_aws_wrapper
-def disable_cdn(c, *args):
-    "Sets a Distribution entry to disabled. Required before deletion."
-    distributions = c.get_all_distributions()
-    for distro in distributions:
-        dist_slug = distro.origin.dns_name.split('.')[0]
-        if dist_slug in args:
-            print "Disabling:", dist_slug
-            #this is broken as of boto 2.0b4.
-            #fix is to comment out lines 347-352 in cloudfront/distribution.py
-            distro.get_distribution().disable()
-
-@_aws_wrapper
-def delete_cdn(c):
-    "Deletes all Distributions in the 'Disabled' state."
-    distributions = c.get_all_distributions()
-    for distro in distributions:
-        if not distro.enabled and distro.status=="Deployed":
-            print "Deleting", distro.origin.dns_name
-            distro.get_distribution().delete()
+    with cd("%s" % env.code_dir):
+        run('git checkout dev')
 
 
-@hosts(['chimera.ericholscher.com'])
-def full_deploy():
+def bootstrap():
+    """
+    Init django project
+    """
     push()
-    update_requirements()
-    migrate()
+    create_virtualenv()
+    with cd(env.code_dir):
+        with _virtualenv():
+            sudo('pip install -r ../deploy_requirements.txt', pty=True)
+            sudo('python manage.py syncdb --noinput --settings=settings_server', pty=True)
+            #sudo('python manage.py migrate --settings=settings_server', pty=True)
     restart()
-    celery()
 
-@hosts(['chimera.ericholscher.com'])
-def uptime():
-    run('uptime')
+
+def deploy():
+    """
+    Push code, sync, migrate, generate media, restart
+    """
+    push()
+    with cd(env.code_dir):
+        with _virtualenv():
+            sudo('python manage.py syncdb --noinput --settings=settings_server', pty=True)
+            #sudo('python manage.py migrate --settings=settings_server', pty=True)
+            sudo('python manage.py collectstatic --settings=settings_server', pty=True)
+
+# Local tasks
+def clean():
+    """
+    Remove all .pyc files
+    """
+    local('find . -name "*.pyc" -exec rm {} \;')
+
+def debug():
+    """
+    Find files with debug symbols
+    """
+    clean()
+    local('grep -ir "print" *')
+    local('grep -ir "console.log" *')
+
+def todo():
+    """
+    Find all TODO and XXX
+    """
+    clean()
+    local('grep -ir "TODO" *')
+    local('grep -ir "XXX" *')
