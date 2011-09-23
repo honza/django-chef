@@ -48,6 +48,13 @@ The main `fabfile` includes some special logic to work around some of the
 limitations of vagrant. Nothing too hacky though. Every time you want to
 execute something on your local VM, include the `-R vagrant` flag.
 
+Vagrant code reloading
+----------------------
+
+If you run your code in a Vagrant VM, a file watcher is automatically started.
+This watcher will detect changes in your source code and reload gunicorn. This
+emulates the behavior of Django's built-in web server.
+
 
 [1]: https://www.djangoproject.com/
 [2]: http://www.opscode.com/chef/
