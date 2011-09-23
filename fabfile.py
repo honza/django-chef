@@ -77,7 +77,10 @@ def start_gunicorn():
         _vagrant()
     with cd(env.code_dir):
         with _virtualenv():
-            sudo('gunicorn_django -c gunicorn.py --daemon settings_server.py & sleep 3')
+            if env.user == 'vagrant':
+                sudo('gunicorn_django -c gunicorn.py --daemon settings_server.py & sleep 3')
+            else:
+                sudo('gunicorn_django -c gunicorn-vagrant.py --daemon settings_server.py & sleep 3')
 
 
 def push():
