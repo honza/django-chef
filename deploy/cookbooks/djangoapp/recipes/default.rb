@@ -9,7 +9,6 @@ include_recipe 'postgresql::server'
 include_recipe 'memcached'
 include_recipe 'runit'
 include_recipe 'git'
-include_recipe 'rabbitmq'
 
 execute "restart postgres" do
     command "sudo /etc/init.d/postgresql-8.4 restart"
