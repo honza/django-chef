@@ -1,9 +1,6 @@
 [submodule "deploy/cookbooks/python"]
 	path = deploy/cookbooks/python
 	url = git://github.com/opscode-cookbooks/python.git
-[submodule "deploy/cookbooks/postgresql"]
-	path = deploy/cookbooks/postgresql
-	url = git://github.com/opscode-cookbooks/postgresql.git
 [submodule "deploy/cookbooks/openssl"]
 	path = deploy/cookbooks/openssl
 	url = git://github.com/opscode-cookbooks/openssl.git
