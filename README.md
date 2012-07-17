@@ -58,6 +58,7 @@ emulates the behavior of Django's built-in web server.
 TODO
 ----
 
+* Fix the fabfile
 * Bring RabbitMQ back
 * Add better Chef installation
 * Test on real server (i.e. not Vagrant)
