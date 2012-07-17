@@ -55,6 +55,14 @@ If you run your code in a Vagrant VM, a file watcher is automatically started.
 This watcher will detect changes in your source code and reload gunicorn. This
 emulates the behavior of Django's built-in web server.
 
+TODO
+----
+
+* Port to Ubuntu 12.04
+* Bring RabbitMQ back
+* Add better Chef installation
+* Test on real server (i.e. not Vagrant)
+* Port to latest Vagrant
 
 [1]: https://www.djangoproject.com/
 [2]: http://www.opscode.com/chef/
