@@ -58,16 +58,26 @@ emulates the behavior of Django's built-in web server.
 TODO
 ----
 
-* Port to Ubuntu 12.04
 * Bring RabbitMQ back
 * Add better Chef installation
 * Test on real server (i.e. not Vagrant)
-* Port to latest Vagrant
 
 License
 -------
 
 BSD, short and sweet
+
+Changelog
+---------
+
+* 0.5.0 (2012-07-17)
+    - Upgrade to Ubuntu 12.04
+    - Upgrade to postgresql 9.1
+    - Upgrade to Python 2.7
+    - Add vim package
+
+* pre-0.5.0 (2012-07-16)
+    - Distant past
 
 [1]: https://www.djangoproject.com/
 [2]: http://www.opscode.com/chef/
