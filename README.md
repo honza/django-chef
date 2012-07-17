@@ -64,6 +64,11 @@ TODO
 * Test on real server (i.e. not Vagrant)
 * Port to latest Vagrant
 
+License
+-------
+
+BSD, short and sweet
+
 [1]: https://www.djangoproject.com/
 [2]: http://www.opscode.com/chef/
 [3]: http://vagrantup.com/
