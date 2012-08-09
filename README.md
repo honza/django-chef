@@ -37,6 +37,7 @@ Usage
     * `fabfile.py`
     * `node.json`
 * Run `vagrant up` to build the VM
+* Run `vagrant ssh` and add the `coolname` user to `sudoers`
 * Then run `fab -R vagrant bootstrap` which will create a virtualenv, load your
   code, install dependencies, sync your db, etc.
 
@@ -54,6 +55,19 @@ Vagrant code reloading
 If you run your code in a Vagrant VM, a file watcher is automatically started.
 This watcher will detect changes in your source code and reload gunicorn. This
 emulates the behavior of Django's built-in web server.
+
+Root password
+-------------
+
+You can change the password in the `djangoapp/recipes/default.rb` file.  Find
+the `user` block and change the value of the `password` attribute.  It should
+be a salted hash, not plaintext.  To create a new password, run:
+
+    $ openssl passwd -1 "theplaintextpassword"
+
+And paste the result into the recipe file.
+
+The password for the `coolname` user is `coolname`.
 
 TODO
 ----

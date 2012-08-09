@@ -21,6 +21,7 @@ user "coolname" do
     uid 1337
     shell "/bin/bash"
     home "/home/coolname"
+    password "$1$U0epRaJ5$dsyGjpzgl0eFC19CHpCPL0"
 end
 
 directory "/home/coolname" do
@@ -45,10 +46,6 @@ directory "/home/coolname/static" do
     owner "coolname"
     group "coolname"
     mode 0755
-end
-
-group "sudoers" do
-    members ["coolname"]
 end
 
 directory "/home/coolname/.ssh" do
