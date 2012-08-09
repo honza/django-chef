@@ -30,7 +30,7 @@ Usage
 -----
 
 * Install [Vagrant][3]
-* Download the `lucid64` box and add it as `base`
+* Download the `precise32` box and add it as `precise32`
 * Your django project should live in `coolname`. (i.e. `coolname/settings.py`)
 * Please change the name of the directory to match your project
 * The name of the project has to be changed in a few other places
