@@ -4,9 +4,6 @@
 [submodule "deploy/cookbooks/openssl"]
 	path = deploy/cookbooks/openssl
 	url = git://github.com/opscode-cookbooks/openssl.git
-[submodule "deploy/cookbooks/rabbitmq"]
-	path = deploy/cookbooks/rabbitmq
-	url = git://github.com/opscode-cookbooks/rabbitmq.git
 [submodule "deploy/cookbooks/postgresql"]
 	path = deploy/cookbooks/postgresql
 	url = git://github.com/coroutine/chef-postgresql.git
