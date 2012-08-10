@@ -61,6 +61,28 @@ cookbook_file "/home/coolname/.ssh/authorized_keys" do
     mode 0600
 end
 
+cookbook_file "/home/coolname/.profile" do
+    source "profile"
+    owner "coolname"
+    group "coolname"
+    mode 0600
+end
+
+cookbook_file "/home/coolname/.bashrc" do
+    source "bashrc"
+    owner "coolname"
+    group "coolname"
+    mode 0600
+end
+
+cookbook_file "/etc/init/celery.conf" do
+    source "celery.conf"
+end
+
+execute "reload upstart scripts" do
+    command "sudo initctl reload-configuration"
+end
+
 # Packages -------------------------------------------------------------------
 #
 
