@@ -32,6 +32,7 @@ Usage
 * Install [Vagrant][3]
 * Download the `precise32` box and add it as `precise32`
 * Your django project should live in `coolname`. (i.e. `coolname/settings.py`)
+* Add `coolname` (or what you change it to) to `/etc/hosts`
 * Please change the name of the directory to match your project
 * The name of the project has to be changed in a few other places
     * `fabfile.py`
@@ -40,6 +41,7 @@ Usage
 * Run `vagrant ssh` and add the `coolname` user to `sudoers`
 * Then run `fab -R vagrant bootstrap` which will create a virtualenv, load your
   code, install dependencies, sync your db, etc.
+* Open your browser at `http://coolname:8844`.
 
 
 Vagrant roledef for fabric
@@ -49,12 +51,6 @@ The main `fabfile` includes some special logic to work around some of the
 limitations of vagrant. Nothing too hacky though. Every time you want to
 execute something on your local VM, include the `-R vagrant` flag.
 
-Vagrant code reloading
-----------------------
-
-If you run your code in a Vagrant VM, a file watcher is automatically started.
-This watcher will detect changes in your source code and reload gunicorn. This
-emulates the behavior of Django's built-in web server.
 
 Root password
 -------------
