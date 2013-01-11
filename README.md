@@ -68,8 +68,12 @@ The password for the `coolname` user is `coolname`.
 TODO
 ----
 
+* Turn this into a scaffolding command with options
 * Fix the fabfile
+* Use supervisord for celery and gunicorn
+* Use chef to manage configuration
 * Bring RabbitMQ back
+* Add optional install of flower
 * Add better Chef installation
 * Test on real server (i.e. not Vagrant)
 
