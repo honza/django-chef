@@ -1,4 +1,0 @@
-celery
-django-celery
-django
-fabric
