@@ -1,0 +1,34 @@
+export EDITOR=vim
+
+function psg {
+    ps auxww | grep --color=always $* | grep -v grep | sed -e 's/  */ /g' | cut -d' ' -f 2,11-
+}
+
+alias ls='ls -h'
+alias l='ls'
+alias du='du -sh'
+alias rmpyc='find . -name "*.pyc" -exec rm {} \;'
+
+VENV=/opt/example/venvs/example
+VBIN=$VENV/bin
+APPS=/opt/example/apps
+MANAGEPY=$APPS/example/src/manage.py
+
+export USER="<%= node[:user] %>"
+
+function pm {
+    python manage.py $* --settings=example.settings_server
+}
+
+function run {
+    python $MANAGEPY runserver --settings=example.settings_server
+}
+
+function dbreset {
+    dropdb -U postgres example
+    createdb -U postgres example
+    python $MANAGEPY syncdb --noinput --settings=example.settings_server
+    python $MANAGEPY migrate --settings=example.settings_server
+}
+
+cd $APPS/example/src && source $VBIN/activate

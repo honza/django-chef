@@ -1,0 +1,7 @@
+[program:app]
+command=/opt/example/venvs/example/bin/gunicorn --config gunicorn-config.py example.wsgi:application
+user=www-data
+directory=/opt/example/apps/example/src
+autostart=false
+autorestart=true
+killasgroup=true

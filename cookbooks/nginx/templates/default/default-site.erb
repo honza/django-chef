@@ -1,0 +1,42 @@
+<% if node[:user] == "vagrant" %>
+upstream example-vagrant {
+    server 127.0.0.1:8000;
+}
+<% end %>
+
+server {
+    listen 80;
+    server_name <%= node[:servername] %>;
+
+    location / {
+        <% if node[:user] == "vagrant" %>
+        proxy_pass http://example-vagrant;
+        proxy_set_header Host <%= node[:servername] %>:3456;
+        <% else %>
+        proxy_pass http://127.0.0.1:8888;
+        proxy_set_header Host $host;
+        <% end %>
+
+        proxy_buffering off;
+        proxy_redirect off;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    <% if node[:staticfiles] %>
+
+    location /static/ {
+        alias <%= node[:staticfiles] %>;
+    }
+
+    <% end %>
+
+    <% if node[:mediafiles] %>
+
+    location /media/ {
+        alias <%= node[:mediafiles] %>;
+    }
+
+    <% end %>
+
+}
