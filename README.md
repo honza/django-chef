@@ -41,6 +41,33 @@ The name of your application is assumed to be `example`.  It's used throughout.
 
 You can then use the included Chef cookbooks to provision a local VM.
 
+It will install your application into `/opt/example`.  The structure of that
+directory is something like this
+
+    /opt/example
+        /apps
+            /example
+                # Your Django project here
+        /venvs
+            /example
+
+Each developer on your team should be added to the `users` list in the
+`Vagrantfile` and the `node` file so that they can access the server.
+
+Deployment
+----------
+
+Deploying is as easy as issue ia single Fabric command.
+
+    $ fab vagrant:honza deploy
+    # or
+    $ fab staging:honza deploy
+
+Deployments are based around git.  When you deploy, the script will run `git
+push` to your server so make sure your local changes are committed before
+deploying.  Deploying with git is useful because the server knows which
+revision is currently live.
+
 Todo
 ----
 
