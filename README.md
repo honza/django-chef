@@ -54,6 +54,22 @@ directory is something like this
 Each developer on your team should be added to the `users` list in the
 `Vagrantfile` and the `node` file so that they can access the server.
 
+Developing
+----------
+
+If you want to develop in vagrant, it's as simple as provisioning the VM,
+logging in and typing in `run`.  Instead of using supervisor to daemonize the
+gunicorn process that servers your Django application, you will use Django's
+built-in server.  This is great because it will reload your application when it
+detects changes to the source code.
+
+To facilitate this, there is a bit of special stuff in the nginx directive.
+But that's it.  Everything else is the same as it would be in production.
+
+When developing, you don't need to commit your changes in order to see if a bug
+was fixed.  This project takes advantage of vagrant's shared folders. The
+source code on the host machine is symlinked to the `/opt` directory.
+
 Deployment
 ----------
 
@@ -72,6 +88,7 @@ Todo
 ----
 
 * RabbitMQ + celery
+* Install patched postgresql
 
 License
 -------
